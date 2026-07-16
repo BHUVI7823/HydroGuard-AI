@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Get in touch with the HydroGuard AI team. Submit questions or collaborations.">
+    <title>HydroGuard AI - Contact & Support</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Bubbles Background Container -->
+    <div id="bubble-container" class="bubble-container"></div>
+
+    <!-- Animated Wave Background -->
+    <div class="background-decorations">
+        <div class="moving-gradient"></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <nav class="sticky-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">
+                <span class="water-drop-icon">💧</span> HydroGuard AI
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="{{ url_for('predict', new='true') }}" class="nav-link">Predict</a>
+                <a href="{{ url_for('predict', view='dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                <a href="{{ url_for('contact') }}" class="nav-link active">Contact</a>
+            </div>
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-drawer">
+        <a href="{{ url_for('home') }}" class="drawer-link">Home</a>
+        <a href="{{ url_for('predict', new='true') }}" class="drawer-link">Predict</a>
+        <a href="{{ url_for('predict', view='dashboard') }}" class="drawer-link">Dashboard</a>
+        <a href="{{ url_for('about') }}" class="drawer-link">About</a>
+        <a href="{{ url_for('contact') }}" class="drawer-link">Contact</a>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <main class="content-wrapper">
+        <div class="contact-container">
+
+            <div class="section-header" data-aos="fade-down">
+                <span class="pill-badge pill-glow"><i class="fa-solid fa-message"></i> Inquiry System</span>
+                <h1>Connect With Us</h1>
+            </div>
+
+            <div class="contact-single-col" style="max-width: 620px; margin: 0 auto;">
+
+                <!-- Contact Form Card -->
+                <div class="contact-form-card glass-card" data-aos="fade-up">
+                    <h3><i class="fa-solid fa-paper-plane text-lightblue"></i> Send Message</h3>
+
+                    <form id="contact-form"
+                        onsubmit="event.preventDefault(); alert('Thank you! Your message has been sent successfully.'); this.reset();">
+                        <div class="input-group">
+                            <label for="c_name">Full Name</label>
+                            <input type="text" id="c_name" name="name" placeholder="John Doe" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="c_email">Email Address</label>
+                            <input type="email" id="c_email" name="email" placeholder="john@example.com" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="c_msg">Your Message</label>
+                            <textarea id="c_msg" name="message" rows="5" placeholder="Write details here..."
+                                required></textarea>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <button type="submit" class="btn primary-btn btn-glowing"><i
+                                class="fa-solid fa-circle-check"></i> Submit Inquiry</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Waves Divider Graphic at bottom -->
+    <div class="wave-wrapper">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none"
+            shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z" />
+            </defs>
+            <g class="parallax-waves">
+                <use href="#gentle-wave" x="48" y="0" fill="rgba(0, 119, 182, 0.15)" />
+                <use href="#gentle-wave" x="48" y="3" fill="rgba(0, 180, 216, 0.2)" />
+                <use href="#gentle-wave" x="48" y="5" fill="rgba(202, 240, 248, 0.07)" />
+                <use href="#gentle-wave" x="48" y="7" fill="rgba(0, 119, 182, 0.3)" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>&copy; 2026 HydroGuard AI. All rights reserved.</p>
+        <p class="credits">Built using <i class="fab fa-python"></i> Python, Flask, Scikit-learn, HTML5, CSS3, &
+            JavaScript.</p>
+    </footer>
+
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- AOS Scroll Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+    </script>
+    <!-- Custom Web Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

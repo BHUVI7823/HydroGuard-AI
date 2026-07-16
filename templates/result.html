@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HydroGuard AI detailed water prediction dashboard metrics.">
+    <title>HydroGuard AI - Results Dashboard</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Bubbles Background Container -->
+    <div id="bubble-container" class="bubble-container"></div>
+
+    <!-- Animated Wave Background -->
+    <div class="background-decorations">
+        <div class="moving-gradient"></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <nav class="sticky-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">
+                <span class="water-drop-icon">💧</span> HydroGuard AI
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="{{ url_for('predict', new='true') }}" class="nav-link">Predict</a>
+                <a href="{{ url_for('predict', view='dashboard') }}" class="nav-link active">Dashboard</a>
+                <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            </div>
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-drawer">
+        <a href="{{ url_for('home') }}" class="drawer-link">Home</a>
+        <a href="{{ url_for('predict', new='true') }}" class="drawer-link">Predict</a>
+        <a href="{{ url_for('predict', view='dashboard') }}" class="drawer-link">Dashboard</a>
+        <a href="{{ url_for('about') }}" class="drawer-link">About</a>
+        <a href="{{ url_for('contact') }}" class="drawer-link">Contact</a>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <main class="content-wrapper">
+        <div class="result-container">
+
+            <div class="section-header" data-aos="fade-down">
+                <span class="pill-badge pill-glow"><i class="fa-solid fa-square-poll-vertical"></i> Simulation
+                    Report</span>
+                <h1>Water Diagnostic Dashboard</h1>
+                <p>Machine learning classification and index score summary based on input sample.</p>
+            </div>
+
+            <!-- Dashboard Grid Row 1: Primary Metrics Cards -->
+            <div class="report-overview-grid">
+
+                <!-- Main Prediction Result Card -->
+                <div class="card glass-card result-prediction-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-robot"></i> Machine Learning Prediction</h3>
+                        <span class="info-tooltip" title="Random Forest Classifier classification"><i
+                                class="fa-solid fa-info-circle"></i></span>
+                    </div>
+                    <div class="card-body">
+                        <span class="result-label">Predicted Primary Usage</span>
+                        <div class="predicted-usage-box glow-badge">
+                            <span class="pred-icon">💧</span>
+                            <span class="pred-text">{{ data.prediction }}</span>
+                        </div>
+
+                        <div class="confidence-levels">
+                            <h4>Prediction Confidence Distribution</h4>
+                            {% for conf in data.confidence %}
+                            <div class="confidence-bar-wrapper">
+                                <div class="prog-labels">
+                                    <span class="prog-class-name">{{ conf.class }}</span>
+                                    <span class="prog-percent">{{ conf.prob }}%</span>
+                                </div>
+                                <div class="prog-bar-bg">
+                                    <!-- Dynamic width style is animated by script on load -->
+                                    <div class="prog-bar-fill" style="width: {{ conf.prob }}%;"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Water Quality Index (WQI) Gauge Card -->
+                <div class="card glass-card result-wqi-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-gauge-high"></i> Water Quality Index</h3>
+                        <span class="info-tooltip" title="Calculated based on 10 water quality properties"><i
+                                class="fa-solid fa-info-circle"></i></span>
+                    </div>
+                    <div class="card-body gauge-body">
+                        <div class="gauge-wrapper">
+                            <svg width="220" height="220" viewBox="0 0 200 200">
+                                <defs>
+                                    <!-- Glowing gradient for gauge track -->
+                                    <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                        <stop offset="0%" stop-color="#ef476f" /> <!-- Red -->
+                                        <stop offset="35%" stop-color="#ffd166" /> <!-- Yellow/Orange -->
+                                        <stop offset="70%" stop-color="#4ea8de" /> <!-- Blue -->
+                                        <stop offset="100%" stop-color="#06d6a0" /> <!-- Green -->
+                                    </linearGradient>
+                                </defs>
+                                <!-- Background Track -->
+                                <circle cx="100" cy="100" r="75" fill="none" stroke="rgba(255,255,255,0.06)"
+                                    stroke-width="12" stroke-dasharray="353.4 471.2" stroke-linecap="round"
+                                    transform="rotate(135 100 100)" />
+                                <!-- Input Score Fill. stroke-dashoffset logic handles WQI score dynamically -->
+                                <circle id="wqi-gauge-fill" cx="100" cy="100" r="75" fill="none"
+                                    stroke="url(#gaugeGrad)" stroke-width="14" stroke-dasharray="353.4 471.2"
+                                    stroke-dashoffset="353.4" stroke-linecap="round" transform="rotate(135 100 100)"
+                                    data-score="{{ data.wqi.score }}" />
+                            </svg>
+                            <div class="gauge-center-content">
+                                <span class="gauge-val" id="gauge-score-val">0.0</span>
+                                <span class="gauge-denominator">/ 100</span>
+                            </div>
+                        </div>
+                        <div class="wqi-status-summary">
+                            <span class="wqi-status-label WQI-text-{{ data.wqi.status_class }}">WQI Status: {{
+                                data.wqi.status }}</span>
+                            <p class="wqi-description">A score above 70 indicates water suitable for standard domestic
+                                uses. Above 90 meets human drinking water thresholds.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recommendation & Suggestions Card -->
+                <div class="card glass-card result-recommendation-card" data-aos="fade-up" data-aos-delay="300">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-clipboard-list"></i> Resource Guidelines</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="recommendation-header">
+                            <span class="rec-title">Recommended Action:</span>
+                            <span class="rec-badge status-{{ data.wqi.status_class }}">Suitable for {{
+                                data.wqi.recommendation }} Use</span>
+                        </div>
+
+                        <div class="reasons-suggestions-grid">
+                            <div class="feedback-col reasons-col">
+                                <h5><i class="fa-solid fa-circle-check text-green"></i> Positive Parameters</h5>
+                                <ul>
+                                    {% for reason in data.wqi.reasons %}
+                                    <li>{{ reason }}</li>
+                                    {% else %}
+                                    <li>No ideal properties detected.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="feedback-col suggestions-col">
+                                <h5><i class="fa-solid fa-square-poll-horizontal text-orange"></i> Required Treatment
+                                </h5>
+                                <ul>
+                                    {% for sugg in data.wqi.suggestions %}
+                                    <li>{{ sugg }}</li>
+                                    {% else %}
+                                    <li><i class="fa-solid fa-sparkles"></i> None! Chemical balances are within stable
+                                        ranges.</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Dashboard Grid Row 2: Charts and Graphs -->
+            <div class="charts-section-grid">
+
+                <!-- Chart 1: Probabilities -->
+                <div class="card glass-card probability-chart-card" data-aos="fade-up" data-aos-delay="100">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-chart-simple"></i> Classification Probabilities</h3>
+                    </div>
+                    <div class="card-body chart-body">
+                        <canvas id="probabilityChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 3: Radar Chart of inputs -->
+                <div class="card glass-card radar-chart-card" data-aos="fade-up" data-aos-delay="200">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-circle-nodes"></i> Parameter Distribution</h3>
+                    </div>
+                    <div class="card-body chart-body">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Chart 2: Feature Importance -->
+                <div class="card glass-card importance-chart-card" data-aos="fade-up" data-aos-delay="100"
+                    style="grid-column: 1 / -1;">
+                    <div class="card-header">
+                        <h3><i class="fa-solid fa-chart-line"></i> Machine Learning Feature Importance</h3>
+                        <span class="model-meta">HydroGuard Decision Forest (Gini Index Gaining)</span>
+                    </div>
+                    <div class="card-body chart-body feature-importance-body">
+                        <canvas id="importanceChart" height="90"></canvas>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="dashboard-actions-footer" data-aos="fade-up">
+                <a href="{{ url_for('predict', new='true') }}" class="btn primary-btn btn-glowing"><i
+                        class="fa-solid fa-rotate-left"></i> Run Another Prediction</a>
+                <a href="{{ url_for('home') }}" class="btn secondary-btn"><i class="fa-solid fa-home"></i> Return to
+                    Homepage</a>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Embedded Raw Inputs for Javascript Chart Processing -->
+    <div id="raw-data-bridge" style="display:none;" data-ph="{{ data.inputs.ph }}" data-tds="{{ data.inputs.tds }}"
+        data-turbidity="{{ data.inputs.turbidity }}" data-do="{{ data.inputs.do }}" data-bod="{{ data.inputs.bod }}"
+        data-cod="{{ data.inputs.cod }}" data-nitrate="{{ data.inputs.nitrate }}"
+        data-fluoride="{{ data.inputs.fluoride }}" data-hardness="{{ data.inputs.hardness }}"
+        data-ec="{{ data.inputs.ec }}" data-temp="{{ data.inputs.temp }}" data-rainfall="{{ data.inputs.rainfall }}"
+        data-source="{{ data.inputs.source }}" data-season="{{ data.inputs.season }}"
+        data-pred-classes="[{% for conf in data.confidence %}'{{ conf.class }}'{% if not loop.last %},{% endif %}{% endfor %}]"
+        data-pred-probs="[{% for conf in data.confidence %}{{ conf.prob_decimal }}{% if not loop.last %},{% endif %}{% endfor %}]">
+    </div>
+
+    <!-- Waves Divider Graphic at bottom -->
+    <div class="wave-wrapper">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none"
+            shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z" />
+            </defs>
+            <g class="parallax-waves">
+                <use href="#gentle-wave" x="48" y="0" fill="rgba(0, 119, 182, 0.15)" />
+                <use href="#gentle-wave" x="48" y="3" fill="rgba(0, 180, 216, 0.2)" />
+                <use href="#gentle-wave" x="48" y="5" fill="rgba(202, 240, 248, 0.07)" />
+                <use href="#gentle-wave" x="48" y="7" fill="rgba(0, 119, 182, 0.3)" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>&copy; 2026 HydroGuard AI. All rights reserved.</p>
+        <p class="credits">Built using <i class="fab fa-python"></i> Python, Flask, Scikit-learn, HTML5, CSS3, &
+            JavaScript.</p>
+    </footer>
+
+    <!-- ChartJS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- AOS Scroll Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+    </script>
+    <!-- Custom Web Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>

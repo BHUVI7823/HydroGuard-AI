@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HydroGuard AI is a premium water quality analysis and prediction system leveraging advanced machine learning.">
+    <title>HydroGuard AI - Smart Water Quality & Usage Prediction</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <!-- Bubbles Background Container -->
+    <div id="bubble-container" class="bubble-container"></div>
+
+    <!-- Animated Wave Background -->
+    <div class="background-decorations">
+        <div class="moving-gradient"></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <nav class="sticky-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">
+                <span class="water-drop-icon">💧</span> HydroGuard AI
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link {% if active_page == 'home' or not active_page %}active{% endif %}">Home</a>
+                <a href="{{ url_for('predict', new='true') }}" class="nav-link {% if active_page == 'predict' and not show_dashboard %}active{% endif %}">Predict</a>
+                <a href="{{ url_for('predict', view='dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('about') }}" class="nav-link">About</a>
+                <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            </div>
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-drawer">
+        <a href="{{ url_for('home') }}" class="drawer-link">Home</a>
+        <a href="{{ url_for('predict', new='true') }}" class="drawer-link">Predict</a>
+        <a href="{{ url_for('predict', view='dashboard') }}" class="drawer-link">Dashboard</a>
+        <a href="{{ url_for('about') }}" class="drawer-link">About</a>
+        <a href="{{ url_for('contact') }}" class="drawer-link">Contact</a>
+    </div>
+
+    <!-- Main Content Container -->
+    <main class="content-wrapper">
+        
+        {% if notification %}
+        <div class="notification-bar glass-card" data-aos="fade-down">
+            <span class="bell-icon"><i class="fa-solid fa-circle-exclamation"></i></span>
+            <p>{{ notification }}</p>
+            <button class="close-notification-btn" onclick="this.parentElement.remove();">&times;</button>
+        </div>
+        {% endif %}
+
+        {% if show_form %}
+        <!-- Prediction Form View -->
+        <section class="form-section predict-container">
+            <div class="section-header" data-aos="fade-down">
+                <span class="pill-badge">Machine Learning Engine</span>
+                <h1>Water Usage Predictor</h1>
+                <p>Provide the physical and chemical properties of the water sample to predict recommended distribution usage and assess overall purity score.</p>
+            </div>
+
+            <!-- Validation Error Alert Placeholder -->
+            <div id="validation-alert" class="validation-alert hidden">
+                <i class="fa-solid fa-circle-xmark"></i>
+                <span id="validation-txt"></span>
+            </div>
+
+            <form id="prediction-form" action="{{ url_for('predict') }}" method="POST" class="predict-form-card glass-card" data-aos="zoom-in" data-aos-delay="100">
+                <div class="two-column-inputs">
+                    <!-- Left Column inputs -->
+                    <div class="form-column">
+                        <h3 class="column-title"><i class="fa-solid fa-flask"></i> Chemical Properties</h3>
+                        
+                        <div class="input-group">
+                            <label for="ph">pH <span class="label-info">(0.0 - 14.0)</span></label>
+                            <input type="number" id="ph" name="ph" step="0.01" min="0.0" max="14.0" value="7.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="tds">TDS <span class="label-info">mg/L (0.0 - 5000.0)</span></label>
+                            <input type="number" id="tds" name="tds" step="0.1" min="0.0" max="5000.0" value="500.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="turbidity">Turbidity <span class="label-info">NTU (0.0 - 100.0)</span></label>
+                            <input type="number" id="turbidity" name="turbidity" step="0.01" min="0.0" max="100.0" value="5.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="do">DO <span class="label-info">mg/L (0.0 - 15.0)</span></label>
+                            <input type="number" id="do" name="do" step="0.01" min="0.0" max="15.0" value="7.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="bod">BOD <span class="label-info">mg/L (0.0 - 40.0)</span></label>
+                            <input type="number" id="bod" name="bod" step="0.01" min="0.0" max="40.0" value="2.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="cod">COD <span class="label-info">mg/L (0.0 - 300.0)</span></label>
+                            <input type="number" id="cod" name="cod" step="0.1" min="0.0" max="300.0" value="20.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="nitrate">Nitrate <span class="label-info">mg/L (0.0 - 200.0)</span></label>
+                            <input type="number" id="nitrate" name="nitrate" step="0.01" min="0.0" max="200.0" value="20.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+                    </div>
+
+                    <!-- Right Column inputs -->
+                    <div class="form-column">
+                        <h3 class="column-title"><i class="fa-solid fa-circle-nodes"></i> Environmental Factors</h3>
+
+                        <div class="input-group">
+                            <label for="fluoride">Fluoride <span class="label-info">mg/L (0.0 - 5.0)</span></label>
+                            <input type="number" id="fluoride" name="fluoride" step="0.01" min="0.0" max="5.0" value="1.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="hardness">Hardness <span class="label-info">mg/L (0.0 - 1200.0)</span></label>
+                            <input type="number" id="hardness" name="hardness" step="0.1" min="0.0" max="1200.0" value="200.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="ec">EC <span class="label-info">µS/cm (0.0 - 8000.0)</span></label>
+                            <input type="number" id="ec" name="ec" step="0.1" min="0.0" max="8000.0" value="800.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="temp">Temperature <span class="label-info">°C (0.0 - 50.0)</span></label>
+                            <input type="number" id="temp" name="temp" step="0.1" min="0.0" max="50.0" value="28.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="rainfall">Rainfall <span class="label-info">mm (0.0 - 500.0)</span></label>
+                            <input type="number" id="rainfall" name="rainfall" step="0.1" min="0.0" max="500.0" value="100.0" required>
+                            <span class="input-bar"></span>
+                        </div>
+
+                        <div class="input-group select-group">
+                            <label for="source">Water Source</label>
+                            <div class="custom-select-wrapper">
+                                <select id="source" name="source" required>
+                                    {% for src in source_classes %}
+                                    <option value="{{ src }}" {% if src == 'River' %}selected{% endif %}>{{ src }}</option>
+                                    {% else %}
+                                    <option value="River" selected>River</option>
+                                    <option value="Lake">Lake</option>
+                                    <option value="Borewell">Borewell</option>
+                                    <option value="Reservoir">Reservoir</option>
+                                    <option value="Tap">Tap</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="input-group select-group">
+                            <label for="season">Season</label>
+                            <div class="custom-select-wrapper">
+                                <select id="season" name="season" required>
+                                    {% for seas in season_classes %}
+                                    <option value="{{ seas }}" {% if seas == 'Summer' %}selected{% endif %}>{{ seas }}</option>
+                                    {% else %}
+                                    <option value="Summer" selected>Summer</option>
+                                    <option value="Winter">Winter</option>
+                                    <option value="Monsoon">Monsoon</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn primary-btn btn-glowing"><i class="fa-solid fa-bolt"></i> Predict Water Usage</button>
+                    <a href="{{ url_for('home') }}" class="btn secondary-btn"><i class="fa-solid fa-arrow-left"></i> Back to Home</a>
+                </div>
+            </form>
+        </section>
+
+        {% else %}
+        <!-- Landing Home View -->
+        <section class="hero-section">
+            <div class="hero-grid">
+                <div class="hero-text-col" data-aos="fade-right">
+                    <span class="pill-badge pill-glow"><i class="fa-solid fa-sparkles"></i> AI Water Management</span>
+                    <h1 class="hero-title">HydroGuard AI</h1>
+                    <p class="hero-subtitle">Smart Water Quality and Usage Prediction using Machine Learning</p>
+                    <p class="hero-desc">An advanced, data-driven framework leveraging Random Forest models to analyze critical chemical properties of water samples, compute environmental metrics, and recommend secondary municipal usage.</p>
+                    <div class="hero-actions">
+                        <a href="{{ url_for('predict') }}" class="btn primary-btn btn-glowing">Analyze Water <i class="fa-solid fa-chevron-right"></i></a>
+                        <a href="{{ url_for('about') }}" class="btn secondary-btn">Learn More <i class="fa-solid fa-info-circle"></i></a>
+                    </div>
+                </div>
+                <div class="hero-media-col" data-aos="fade-left" data-aos-delay="200">
+                    <div class="droplet-container">
+                        <!-- Fluid dynamic 3D-styled water bubble -->
+                        <div class="water-droplet-glow"></div>
+                        <div class="water-droplet">
+                            <div class="inner-fluid"></div>
+                            <div class="glare-dot"></div>
+                        </div>
+                        <div class="droplet-ring"></div>
+                        <!-- Mini data points surrounding droplet -->
+                        <div class="data-indicator tag-ph"><span class="lbl">pH</span><span class="val">7.2</span></div>
+                        <div class="data-indicator tag-wqi"><span class="lbl">WQI</span><span class="val">94%</span></div>
+                        <div class="data-indicator tag-usage"><span class="lbl">Usage</span><span class="val">Drinking</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Stats Counter / Highlight Section -->
+        <section class="highlights-section" data-aos="fade-up" data-aos-delay="100">
+            <h2 class="center-title">Why HydroGuard AI?</h2>
+            <p class="center-subtitle">Harnessing advanced machine learning model analytics for ecological resource safety.</p>
+            <div class="highlights-grid">
+                <div class="highlight-card glass-card hover-glow">
+                    <div class="hl-icon"><i class="fa-solid fa-microchip"></i></div>
+                    <h3>Random Forest Engine</h3>
+                    <p>Uses a highly trained multi-tree decision ensemble classifier yielding up to 98% accuracy on verification datasets.</p>
+                </div>
+                <div class="highlight-card glass-card hover-glow">
+                    <div class="hl-icon"><i class="fa-solid fa-gauge-high"></i></div>
+                    <h3>Real-time WQI Scores</h3>
+                    <p>Evaluates sample indices directly across 10 vital criteria, classifying purity into human-comprehensible safety levels.</p>
+                </div>
+                <div class="highlight-card glass-card hover-glow">
+                    <div class="hl-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <h3>Intelligent Suggestions</h3>
+                    <p>Calculates dynamic mitigation steps to normalize parameters exceeding regulatory municipal water thresholds.</p>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+    </main>
+
+    <!-- Global Loading Overlay -->
+    <div id="loader-overlay" class="loader-overlay hidden">
+        <div class="loader-content glass-card">
+            <div class="loader-spinner">
+                <div class="bubble-loader"></div>
+                <div class="droplet-loader">💧</div>
+            </div>
+            <h3 id="loader-status">Extracting Chemical Fingerprint...</h3>
+            <span class="loader-detail">Evaluating pH, TDS, DO, and Heavy Metals</span>
+            <!-- Progress strip -->
+            <div class="loader-bar-bg">
+                <div class="loader-bar-fill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Waves Divider Graphic at bottom -->
+    <div class="wave-wrapper">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z" />
+            </defs>
+            <g class="parallax-waves">
+                <use href="#gentle-wave" x="48" y="0" fill="rgba(0, 119, 182, 0.15)" />
+                <use href="#gentle-wave" x="48" y="3" fill="rgba(0, 180, 216, 0.2)" />
+                <use href="#gentle-wave" x="48" y="5" fill="rgba(202, 240, 248, 0.07)" />
+                <use href="#gentle-wave" x="48" y="7" fill="rgba(0, 119, 182, 0.3)" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>&copy; 2026 HydroGuard AI. All rights reserved.</p>
+        <p class="credits">Built using <i class="fab fa-python"></i> Python, Flask, Scikit-learn, HTML5, CSS3, & JavaScript.</p>
+    </footer>
+
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- AOS Scroll Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+    </script>
+    <!-- Custom Web Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

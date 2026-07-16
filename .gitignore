@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.env
+.venv
+.idea/
+.vscode/
+.gemini/
+test_output.txt
+water_quality_model.pkl
+*.xlsx

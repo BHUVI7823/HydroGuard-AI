@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="In-depth details of HydroGuard AI's Machine Learning workflow and Water Quality Index calculation.">
+    <title>HydroGuard AI - Documentation & Methodology</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- AOS Animations -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css">
+    <!-- CSS Stylesheet -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <!-- Bubbles Background Container -->
+    <div id="bubble-container" class="bubble-container"></div>
+
+    <!-- Animated Wave Background -->
+    <div class="background-decorations">
+        <div class="moving-gradient"></div>
+    </div>
+
+    <!-- Top Navigation Header -->
+    <nav class="sticky-nav">
+        <div class="nav-container">
+            <a href="{{ url_for('home') }}" class="nav-logo">
+                <span class="water-drop-icon">💧</span> HydroGuard AI
+            </a>
+            <div class="nav-links">
+                <a href="{{ url_for('home') }}" class="nav-link">Home</a>
+                <a href="{{ url_for('predict', new='true') }}" class="nav-link">Predict</a>
+                <a href="{{ url_for('predict', view='dashboard') }}" class="nav-link">Dashboard</a>
+                <a href="{{ url_for('about') }}" class="nav-link active">About</a>
+                <a href="{{ url_for('contact') }}" class="nav-link">Contact</a>
+            </div>
+            <div class="menu-toggle" id="mobile-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-drawer" id="mobile-drawer">
+        <a href="{{ url_for('home') }}" class="drawer-link">Home</a>
+        <a href="{{ url_for('predict', new='true') }}" class="drawer-link">Predict</a>
+        <a href="{{ url_for('predict', view='dashboard') }}" class="drawer-link">Dashboard</a>
+        <a href="{{ url_for('about') }}" class="drawer-link">About</a>
+        <a href="{{ url_for('contact') }}" class="drawer-link">Contact</a>
+    </div>
+
+    <!-- Main Content Wrapper -->
+    <main class="content-wrapper">
+        <div class="about-container">
+
+            <div class="section-header" data-aos="fade-down">
+                <span class="pill-badge pill-glow"><i class="fa-solid fa-graduation-cap"></i> Technical
+                    Methodology</span>
+                <h1>Behind the Decision Forest</h1>
+                <p>Learn how HydroGuard AI integrates advanced supervised classification models with environmental
+                    metrics to manage local water resources.</p>
+            </div>
+
+            <!-- Project Overview & Dataset Section -->
+            <div class="about-section glass-card" data-aos="fade-up">
+                <div class="about-text-content">
+                    <h2><i class="fa-solid fa-compass-drafting text-lightblue"></i> Project Overview</h2>
+                    <p>Water resource distribution is a vital component of municipal infrastructure, requiring dynamic
+                        division between drinking networks, agricultural irrigation canals, industrial cooling loops,
+                        and general domestic systems. <strong>HydroGuard AI</strong> acts as an advanced gateway,
+                        analyzing crucial biochemical parameters from a sample to predict the safest and most efficient
+                        path of usage while computing a regulatory Water Quality Index (WQI).</p>
+
+                    <h3 class="margin-top-md"><i class="fa-solid fa-database text-lightblue"></i> The Dataset</h3>
+                    <p>The core classification models are trained on a comprehensive ecological repository consisting of
+                        thousands of geolocated freshwater samples collected across multiple sources (rivers, lakes,
+                        borewells, reservoirs) during alternating climate seasons. Variables include chemical
+                        concentrations, temperature balances, annual precipitation rates, and dissolved oxygen contents.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Machine Learning Workflow Section -->
+            <div class="about-section workflow-section-glass glass-card" data-aos="fade-up">
+                <h2><i class="fa-solid fa-diagram-project text-lightblue"></i> Machine Learning Workflow</h2>
+                <div class="workflow-steps-layout">
+
+                    <div class="step-card">
+                        <div class="step-num">01</div>
+                        <h4>Water Fingerprinting</h4>
+                        <p>User inputs 12 chemical and physical characteristics, representing the water sample's unique
+                            geochemical fingerprint.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">02</div>
+                        <h4>Label & Class Encoding</h4>
+                        <p>Categorical features like climate season or geographic source are converted to numeric
+                            indexes using pre-fit encoders.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">03</div>
+                        <h4>Forest Ensemble Routing</h4>
+                        <p>A trained Random Forest model feeds the parsed values through high-depth decision matrices,
+                            counting voting records.</p>
+                    </div>
+
+                    <div class="step-card">
+                        <div class="step-num">04</div>
+                        <h4>Confidence & Recommend Output</h4>
+                        <p>Returns distribution category, voting probability matrix, customized WQI score, and chemical
+                            correction recommendations.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Algorithm Explanation: Random Forest -->
+            <div class="about-section glass-card" data-aos="fade-up">
+                <div class="about-text-content">
+                    <h2><i class="fa-solid fa-tree text-lightblue"></i> The Classifier: Random Forest</h2>
+                    <p>A Random Forest is a meta-estimator that fits multiple decision tree classifiers on various
+                        sub-samples of the dataset and uses averaging to improve predictive accuracy and control
+                        over-fitting.</p>
+                    <ul>
+                        <li><i class="fa-solid fa-circle-nodes text-lightblue"></i> <strong>Bootstrap Aggregation
+                                (Bagging):</strong> Each tree in the forest is trained on random subsets of data with
+                            replacement, reducing total model variance without escalating bias limits.</li>
+                        <li><i class="fa-solid fa-code-merge text-lightblue"></i> <strong>Feature
+                                Randomization:</strong> Random splits select from a subset of attributes (like pH, TDS,
+                            DO) preventing dominant parameters from over-correlating individual tree pathways.</li>
+                        <li><i class="fa-solid fa-circle-check text-lightblue"></i> <strong>High Scalability:</strong>
+                            Handles non-linear decision boundaries and complex feature interactions (such as
+                            interactions between DO, Temperature, and Rainfall rates) smoothly.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Water Quality Parameters & Ideal Ranges -->
+            <div class="about-section glass-card" data-aos="fade-up">
+                <h2><i class="fa-solid fa-list-check text-lightblue"></i> Core Water Quality Parameters</h2>
+                <p class="margin-bottom-sm">Here are the key diagnostic properties evaluated by the HydroGuard decision
+                    engine:</p>
+
+                <div class="parameters-grid">
+
+                    <div class="param-detail-card">
+                        <div class="param-icon-header">
+                            <span class="param-icon"><i class="fa-solid fa-droplet"></i></span>
+                            <h4>pH Indicator</h4>
+                        </div>
+                        <p>A measure of water's acidity or alkalinity on a scale of 0 to 14. Standard aquatic ecosystems
+                            thrive in <strong>6.5 - 8.5</strong>. Deviations cause pipe corrosion or heavy metal
+                            leaching.</p>
+                    </div>
+
+                    <div class="param-detail-card">
+                        <div class="param-icon-header">
+                            <span class="param-icon"><i class="fa-solid fa-cubes"></i></span>
+                            <h4>Total Dissolved Solids (TDS)</h4>
+                        </div>
+                        <p>Measures aggregate inorganic salts and organic molecules dissolved in water. Values
+                            <strong>&lt; 500 mg/L</strong> are ideal. High TDS induces mineral deposits and salty
+                            tastes.</p>
+                    </div>
+
+                    <div class="param-detail-card">
+                        <div class="param-icon-header">
+                            <span class="param-icon"><i class="fa-solid fa-cloud-sun-rain"></i></span>
+                            <h4>Turbidity</h4>
+                        </div>
+                        <p>Dictates physical clarity by assessing how floating microorganisms scatter light rays.
+                            Standard limits require <strong>&lt; 5 NTU</strong>. High values shelter bacterial pathogens
+                            from UV treatments.</p>
+                    </div>
+
+                    <div class="param-detail-card">
+                        <div class="param-icon-header">
+                            <span class="param-icon"><i class="fa-solid fa-wind"></i></span>
+                            <h4>Dissolved Oxygen (DO)</h4>
+                        </div>
+                        <p>The concentration of free oxygen molecules available to aquatic organisms. Healthy ecosystems
+                            require <strong>&gt; 6 mg/L</strong>. Low DO signals excessive biological respiration or
+                            decaying waste.</p>
+                    </div>
+
+                    <div class="param-detail-card">
+                        <div class="param-icon-header">
+                            <span class="param-icon"><i class="fa-solid fa-bugs"></i></span>
+                            <h4>BOD & COD</h4>
+                        </div>
+                        <p><strong>BOD</strong> assesses organic degradation rate (ideal <strong>&lt; 2 mg/L</strong>).
+                            <strong>COD</strong> measures direct chemical oxidation load (ideal <strong>&lt; 10
+                                mg/L</strong>). High values flag toxic waste.</p>
+                    </div>
+
+                    <div class="param-detail-card">
+                        <div class="param-icon-header">
+                            <span class="param-icon"><i class="fa-solid fa-shield-halved"></i></span>
+                            <h4>Nitrate & Fluoride</h4>
+                        </div>
+                        <p>Nitrates enter from fertilizers (limit <strong>45 mg/L</strong>); fluorides from rock
+                            weathering (limit <strong>1.5 mg/L</strong>). High amounts block blood oxygen or induce
+                            skeletal fluorosis.</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Water Quality Index (WQI) Detail Section -->
+            <div class="about-section glass-card" data-aos="fade-up">
+                <div class="about-text-content">
+                    <h2><i class="fa-solid fa-calculator text-lightblue"></i> WQI Scoring Scale</h2>
+                    <p>The Water Quality Index is calculated using weighted sub-indices for each parameter. The final
+                        value maps human-grade safety metrics into descriptive classes:</p>
+
+                    <div class="wqi-scale-grid">
+                        <div class="scale-item scale-ex">
+                            <span class="score-range">90 - 100</span>
+                            <span class="score-label">Excellent (Suitable for Drinking)</span>
+                        </div>
+                        <div class="scale-item scale-gd">
+                            <span class="score-range">70 - 89</span>
+                            <span class="score-label">Good (Suitable for Domestic use)</span>
+                        </div>
+                        <div class="scale-item scale-mod">
+                            <span class="score-range">50 - 69</span>
+                            <span class="score-label">Moderate (Suitable for Irrigation)</span>
+                        </div>
+                        <div class="scale-item scale-pr">
+                            <span class="score-range">30 - 49</span>
+                            <span class="score-label">Poor (Suitable for Industrial cooling)</span>
+                        </div>
+                        <div class="scale-item scale-uns">
+                            <span class="score-range">0 - 29</span>
+                            <span class="score-label">Very Poor / Unsuitable for Any Use</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Future Scope Section -->
+            <div class="about-section glass-card" data-aos="fade-up">
+                <div class="about-text-content">
+                    <h2><i class="fa-solid fa-rocket text-lightblue"></i> Future Scope</h2>
+                    <p>The roadmap for HydroGuard AI encompasses integrations representing next-generation municipal
+                        smart grids:</p>
+                    <ul>
+                        <li><i class="fa-solid fa-wifi text-lightblue"></i> <strong>IoT Stream Arrays:</strong>
+                            Integrating directly with physical sensor arrays deployed along rivers to receive pH, EC,
+                            and Turbidity values in real-time, skipping manual forms.</li>
+                        <li><i class="fa-solid fa-city text-lightblue"></i> <strong>Municipal Dispatch
+                                Automation:</strong> Hooking predictions into water treatment plant valves to
+                            automatically route lower quality run-offs to irrigation networks, saving high-grade
+                            reserves.</li>
+                        <li><i class="fa-solid fa-chart-line text-lightblue"></i> <strong>Predictive Leakage
+                                Models:</strong> Combining sensor pressure data with environmental attributes to foresee
+                            structural leaks along concrete aqueducts.</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Waves Divider Graphic at bottom -->
+    <div class="wave-wrapper">
+        <svg class="waves" xmlns="http://www.w3.org/2000/svg" viewBox="0 24 150 28" preserveAspectRatio="none"
+            shape-rendering="auto">
+            <defs>
+                <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s58 18 88 18 58-18 88-18 58 18 88 18v44h-352z" />
+            </defs>
+            <g class="parallax-waves">
+                <use href="#gentle-wave" x="48" y="0" fill="rgba(0, 119, 182, 0.15)" />
+                <use href="#gentle-wave" x="48" y="3" fill="rgba(0, 180, 216, 0.2)" />
+                <use href="#gentle-wave" x="48" y="5" fill="rgba(202, 240, 248, 0.07)" />
+                <use href="#gentle-wave" x="48" y="7" fill="rgba(0, 119, 182, 0.3)" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>&copy; 2026 HydroGuard AI. All rights reserved.</p>
+        <p class="credits">Built using <i class="fab fa-python"></i> Python, Flask, Scikit-learn, HTML5, CSS3, &
+            JavaScript.</p>
+    </footer>
+
+    <!-- GSAP Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <!-- AOS Scroll Animations -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: 'ease-out-cubic'
+        });
+    </script>
+    <!-- Custom Web Script -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+
+</html>
